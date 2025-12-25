@@ -10,8 +10,36 @@ def create_user(db:Session,user:UserCreate) -> User:
     db.refresh(db_user)
     return User(id=db_user.id,name=db_user.name,age=db_user.age)
 
-def list_users(db:Session) -> list[User]:
-    users= db.query(UserModel).all()
+def list_users(db:Session ,
+                name:str = None,
+                min_age:int = None,
+                max_age:int = None,
+                sort_by:str = "id",
+                order:str = "asc",
+                skip:int = 0,
+                limit:int = 10 ) -> list[User]:
+    
+    query= db.query(UserModel)
+
+    #Filtering
+    if name:
+        query=query.filter(UserModel.name.contains(name))
+    if min_age:
+        query=query.filter(UserModel.age >=min_age)
+    if max_age:
+        query=query.filter(UserModel.age <=max_age)
+    
+    #sorting
+    if sort_by in ["id","name","age"]:
+        column = getattr(UserModel,sort_by)
+        if order =="desc":
+            column = column.desc()
+        else:
+            column = column.asc()
+        query=query.order_by(column)
+
+    #paginetion
+    users = query.offset(skip).limit(limit).all()
     return [User(id=u.id,name=u.name,age=u.age) for u in users]
 
 

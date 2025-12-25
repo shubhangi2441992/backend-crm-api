@@ -11,8 +11,16 @@ def create_user(user:UserCreate,db:Session = Depends(get_db)):
     return user_service.create_user(db,user)
 
 @router.get("/",response_model=list[User])
-def list_users(db:Session = Depends(get_db)):
-    return user_service.list_users(db)
+def list_users(
+    name:str = None,
+    min_age:int = None,
+    max_age:int = None,
+    sort_by:str = "id",
+    order:str = "asc",
+    skip:int = 0,
+    limit:int = 10,
+    db:Session = Depends(get_db)):
+    return user_service.list_users(db,name, min_age, max_age, sort_by, order, skip, limit)
 
 @router.get("/{user_id}", response_model=User )
 def get_user(user_id:int,db:Session = Depends(get_db)):
