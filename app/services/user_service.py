@@ -1,38 +1,41 @@
+from sqlalchemy.orm import Session
+from fastapi import HTTPException
+from app.database.models import UserModel
 from app.schemas.user import UserCreate, User 
 
-users_db=[]
+def create_user(db:Session,user:UserCreate) -> User:
+    db_user=UserModel(name=user.name,age=user.age)
+    db.add(db_user)
+    db.commit()
+    db.refresh(db_user)
+    return User(id=db_user.id,name=db_user.name,age=db_user.age)
+
+def list_users(db:Session) -> list[User]:
+    users= db.query(UserModel).all()
+    return [User(id=u.id,name=u.name,age=u.age) for u in users]
 
 
-def create_user(user:UserCreate) -> User:
-    user_data=User(id=len(users_db)+1, **user.dict())
-    """user_data=User(
-    id=len(users_db)+1,
-    name=user.name,
-    age=user.age)"""
+def get_user(db:Session,user_id:int) -> User:
+    user=db.query(UserModel).filter(UserModel.id == user_id).first()
+    if not user:
+        raise HTTPException(status_code=404,detail="User not found")
+    return User(id=user.id,name=user.name,age=user.age)
 
-    users_db.append(user_data)
-    return user_data
+def update_user(db:Session,user_id:int,user_data=UserCreate) -> User:
+    user=db.query(UserModel).filter(UserModel.id==user_id).first()
+    if not user:
+        raise HTTPException(status_code=404,detail="User not found")
 
-def list_users() -> list[User]:
-    return users_db
+    user.name=user_data.name
+    user.age=user_data.age
+    db.commit()
+    db.refresh(user)
+    return User(id=user.id, name=user.name, age=user.age)
 
-def get_user(user_id:int) -> User:
-    for user in users_db:
-        if user.id==user_id:
-            return user
-    return None
-
-def update_user(user_id:int,user_data=UserCreate) -> User:
-    for index,user in enumerate(users_db):
-        if user.id==user_id:
-            updated_data=User(id=user_id, **user_data.dict())
-            users_db[index]=updated_data
-            return updated_data
-    return none
-
-def delete_user(user_id:int) ->bool:
-    for user in users_db:
-        if user.id==user_id:
-            users_db.remove(user)
-            return True
-    return False
+def delete_user(db: Session, user_id: int) -> bool:
+    user = db.query(UserModel).filter(UserModel.id == user_id).first()
+    if not user:
+        raise HTTPException(status_code=404, detail="User not found")
+    db.delete(user)
+    db.commit()
+    return True
