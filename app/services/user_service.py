@@ -1,14 +1,19 @@
 from sqlalchemy.orm import Session
 from fastapi import HTTPException
 from app.database.models import UserModel
-from app.schemas.user import UserCreate, User 
+from app.schemas.user import UserCreate, User
+from app.schemas.response import ResponseModel
 
-def create_user(db:Session,user:UserCreate) -> User:
+def create_user(db:Session,user:UserCreate) -> ResponseModel:
     db_user=UserModel(name=user.name,age=user.age)
     db.add(db_user)
     db.commit()
     db.refresh(db_user)
-    return User(id=db_user.id,name=db_user.name,age=db_user.age)
+    return ResponseModel(
+        success=True,
+        data={"id": db_user.id, "name": db_user.name, "age": db_user.age},
+        message="User created successfully"
+    )
 
 def list_users(db:Session ,
                 name:str = None,
@@ -17,7 +22,7 @@ def list_users(db:Session ,
                 sort_by:str = "id",
                 order:str = "asc",
                 skip:int = 0,
-                limit:int = 10 ) -> list[User]:
+                limit:int = 10 ) -> ResponseModel:
     
     query= db.query(UserModel)
 
@@ -40,16 +45,26 @@ def list_users(db:Session ,
 
     #paginetion
     users = query.offset(skip).limit(limit).all()
-    return [User(id=u.id,name=u.name,age=u.age) for u in users]
+    users_list = [{"id": u.id, "name": u.name, "age": u.age} for u in users]
+    return ResponseModel(
+        success=True,
+        data={"users": users_list},
+        message="Users fetched successfully"
+    )
+    
 
 
-def get_user(db:Session,user_id:int) -> User:
+def get_user(db:Session,user_id:int) -> ResponseModel:
     user=db.query(UserModel).filter(UserModel.id == user_id).first()
     if not user:
         raise HTTPException(status_code=404,detail="User not found")
-    return User(id=user.id,name=user.name,age=user.age)
+    return ResponseModel(
+        success=True,
+        data={"id": user.id, "name": user.name, "age": user.age},
+        message="User fetched successfully"
+    )
 
-def update_user(db:Session,user_id:int,user_data=UserCreate) -> User:
+def update_user(db:Session,user_id:int,user_data=UserCreate) -> ResponseModel:
     user=db.query(UserModel).filter(UserModel.id==user_id).first()
     if not user:
         raise HTTPException(status_code=404,detail="User not found")
@@ -58,12 +73,20 @@ def update_user(db:Session,user_id:int,user_data=UserCreate) -> User:
     user.age=user_data.age
     db.commit()
     db.refresh(user)
-    return User(id=user.id, name=user.name, age=user.age)
+    return ResponseModel(
+        success=True,
+        data={"id": user.id, "name": user.name, "age": user.age},
+        message="User updated successfully"
+    )
 
-def delete_user(db: Session, user_id: int) -> bool:
+def delete_user(db: Session, user_id: int) -> ResponseModel:
     user = db.query(UserModel).filter(UserModel.id == user_id).first()
     if not user:
         raise HTTPException(status_code=404, detail="User not found")
     db.delete(user)
     db.commit()
-    return True
+    return ResponseModel(
+        success=True,
+        data=None,
+        message="User deleted successfully"
+    )
