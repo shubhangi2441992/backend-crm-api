@@ -1,16 +1,20 @@
-from fastapi import FastAPI
+from fastapi import FastAPI, Request, HTTPException
+from fastapi.responses import JSONResponse
 from app.routers import users
 from app.database.database import engine
 from app.database import models
-from fastapi.responses import JSONResponse
-from fastapi import Request, HTTPException, FastAPI
+from app.auth import auth_router
 
+# Create tables
 models.Base.metadata.create_all(bind=engine)
 
-app=FastAPI(title="CRM Backend API")
+app = FastAPI(title="CRM Backend API")
 
+# Include routers
+app.include_router(auth_router.router, prefix="/auth", tags=["Authentication"])
 app.include_router(users.router, prefix="/users", tags=["Users"])
 
+# Global HTTP exception handler
 @app.exception_handler(HTTPException)
 async def http_exception_handler(request: Request, exc: HTTPException):
     return JSONResponse(
@@ -22,8 +26,12 @@ async def http_exception_handler(request: Request, exc: HTTPException):
         }
     )
 
-@app.get("/")
+# Root endpoint
+@app.get("/", response_model=dict)
 def home():
-    return {"message":"CRM Backend API running"}
+    return {"success": True, "data": None, "message": "CRM Backend API running"}
 
-
+# Optional startup event
+@app.on_event("startup")
+async def startup_event():
+    print("CRM Backend API started successfully!")

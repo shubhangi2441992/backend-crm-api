@@ -3,9 +3,12 @@ from fastapi import HTTPException
 from app.database.models import UserModel
 from app.schemas.user import UserCreate, User
 from app.schemas.response import ResponseModel
+from app.auth.auth_utils import hash_password
 
-def create_user(db:Session,user:UserCreate) -> ResponseModel:
-    db_user=UserModel(name=user.name,age=user.age)
+def create_user(db: Session, user: UserCreate) -> ResponseModel:
+    """Create a new user and return the response."""
+    hashed_pwd = hash_password(user.password)
+    db_user=UserModel(name=user.name,age=user.age,password=hashed_pwd)
     db.add(db_user)
     db.commit()
     db.refresh(db_user)
@@ -43,9 +46,10 @@ def list_users(db:Session ,
             column = column.asc()
         query=query.order_by(column)
 
-    #paginetion
+    #pagination
     users = query.offset(skip).limit(limit).all()
     users_list = [{"id": u.id, "name": u.name, "age": u.age} for u in users]
+
     return ResponseModel(
         success=True,
         data={"users": users_list},
@@ -64,7 +68,7 @@ def get_user(db:Session,user_id:int) -> ResponseModel:
         message="User fetched successfully"
     )
 
-def update_user(db:Session,user_id:int,user_data=UserCreate) -> ResponseModel:
+def update_user(db:Session,user_id:int,user_data:UserCreate) -> ResponseModel:
     user=db.query(UserModel).filter(UserModel.id==user_id).first()
     if not user:
         raise HTTPException(status_code=404,detail="User not found")
@@ -81,6 +85,7 @@ def update_user(db:Session,user_id:int,user_data=UserCreate) -> ResponseModel:
 
 def delete_user(db: Session, user_id: int) -> ResponseModel:
     user = db.query(UserModel).filter(UserModel.id == user_id).first()
+    print ("user found",user)
     if not user:
         raise HTTPException(status_code=404, detail="User not found")
     db.delete(user)
