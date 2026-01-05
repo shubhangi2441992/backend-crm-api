@@ -8,3 +8,4 @@ class UserModel(Base):
     name = Column(String, unique=True, index=True, nullable=False)
     age = Column(Integer, nullable=False)
     password = Column(String, nullable=False)
+    role = Column(String, default="user")

@@ -6,6 +6,7 @@ from app.schemas.response import ResponseModel
 from app.services import user_service
 from app.auth.jwt_dependency import get_current_user
 from app.database.models import UserModel
+from app.auth.role_dependency import require_role
 
 router = APIRouter()
 
@@ -51,11 +52,14 @@ def update_user(
     """Update an existing user by ID."""
     return user_service.update_user(db, user_id, user_data)
 
-
 @router.delete("/{user_id}", response_model=ResponseModel)
 def delete_user(
     user_id: int,
     db: Session = Depends(get_db),
-    current_user: UserModel = Depends(get_current_user)):
-    """Delete a user by ID."""
+    current_user = Depends(get_current_user),
+    _ = Depends(require_role("admin"))
+):
     return user_service.delete_user(db, user_id)
+
+
+

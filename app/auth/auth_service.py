@@ -33,8 +33,8 @@ def login_user(db: Session,user: LoginSchema):
         raise HTTPException(status_code=401, detail="Invalid credentials")
 
     access_token = create_access_token(
-        data={"sub": str(db_user.id)}
-    )
+        data={"sub": str(db_user.id), "role": db_user.role})
+
 
     return ResponseModel(
         success=True,
