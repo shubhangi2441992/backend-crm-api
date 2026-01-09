@@ -1,106 +1,135 @@
-CRM Backend API
+🚀 Backend CRM API (FastAPI)
 
-A production-ready CRM Backend API built using FastAPI, SQLAlchemy, and JWT Authentication.
-This project demonstrates clean architecture, authentication, authorization, and advanced CRUD operations.
+A production-ready Backend CRM API built using FastAPI, featuring JWT authentication, role-based access control, PostgreSQL, and Dockerized deployment.
 
-**Tech Stack**
-Backend Framework: FastAPI
-Language: Python 3.10.6
-Database: SQLite
+This project demonstrates how to build secure, scalable REST APIs suitable for real-world backend systems.
+
+✨ Features
+
+🔐 JWT Authentication
+
+Login & signup
+
+Access token–based security
+
+👥 Role-Based Access Control (RBAC)
+
+admin vs user
+
+Admin-only endpoints
+
+🧑‍💻 User Management
+
+CRUD operations
+
+Filtering, sorting, pagination
+
+🗄️ PostgreSQL Database
+
+SQLAlchemy ORM
+
+Environment-based configuration
+
+🐳 Dockerized Setup
+
+Dockerfile + docker-compose
+
+One-command startup
+
+📘 Swagger API Documentation
+
+Interactive API testing
+
+🛠 Tech Stack
+
+Backend: Python 3.10, FastAPI
+
+Auth: JWT (Access Tokens)
+
+Database: PostgreSQL
+
 ORM: SQLAlchemy
-Authentication: JWT (JSON Web Tokens)
-Password Hashing: bcrypt (passlib)
-API Docs: Swagger UI
 
-**Project Structure**
+Containerization: Docker, Docker Compose
+
+Docs: Swagger / OpenAPI
+
+📂 Project Structure
+
 backend-crm-api/
 │
 ├── app/
-│   ├── auth/
-│   │   ├── auth_router.py
-│   │   ├── auth_schema.py
-│   │   ├── auth_service.py
-│   │   ├── auth_utils.py
-│   │   └── jwt_dependency.py
-│   │
-│   ├── database/
-│   │   ├── database.py
-│   │   └── models.py
-│   │
-│   ├── routers/
-│   │   └── users.py
-│   │
-│   ├── schemas/
-│   │   ├── user.py
-│   │   └── response.py
-│   │
-│   ├── services/
-│   │   └── user_service.py
-│   │
-│   └── main.py
+│   ├── auth/               # Auth, JWT, RBAC
+│   ├── routers/            # API routes
+│   ├── services/           # Business logic
+│   ├── database/           # DB config & models
+│   └── schemas/            # Pydantic schemas
 │
-└── crm.db
+├── Dockerfile
+├── docker-compose.yml
+├── requirements.txt
+└── README.md
 
-**Authentication Flow**
-Register User
-Password is hashed using bcrypt
-Login User
-JWT access token is generated
-Secure APIs
-Protected routes require Authorization: Bearer <token>
-
-**Features Implemented**
-✅ Authentication
-User registration
-User login
-Password hashing
-JWT token generation & validation
-
-✅ User Management (CRUD)
-Create user
-List users (with filters)
-Get user by ID
-Update user
-Delete user
-
-**Advanced API Features**
-Filtering (name, age range)
-Sorting (by id, name, age)
-Pagination (skip & limit)
-Centralized error handling
-Consistent API response format
-
-**API Documentation**
-Once the server is running, access Swagger UI:
-http://127.0.0.1:8000/docs
-
-**Setup & Run Locally**
-1️⃣ Clone the repository
-git clone <your-repo-url>
+🚀 Running the Project (Docker)
+1️⃣ Clone the repo
+git clone https://github.com/shubhangi2441992/backend-crm-api.git
 cd backend-crm-api
 
-2️⃣ Create virtual environment
-python -m venv venv
-venv\Scripts\activate
+2️⃣ Start with Docker
+docker compose up --build
 
-3️⃣ Install dependencies
-pip install fastapi uvicorn sqlalchemy passlib[bcrypt] python-jose
+3️⃣ Access API
 
-4️⃣ Run the server
-uvicorn app.main:app --reload
+API: http://localhost:8000
 
-**Database**
-SQLite database (crm.db)
-Tables auto-created on startup
+Swagger Docs: http://localhost:8000/docs
 
-**Future Enhancements (Planned)**
-Role-based access control (Admin/User)
-Refresh tokens
-Docker support
-PostgreSQL integration
-Logging & monitoring
-Unit tests (pytest)
+🔑 Authentication Flow
 
-**Author**
-Shubhangi Deore
-Backend Developer | FastAPI | Python | SQLAlchemy
+Register user
+
+Login → get JWT
+
+Use JWT in Swagger → Authorize
+
+Access protected endpoints
+
+🛡️ Admin-Only Endpoints
+
+GET /admin/stats
+
+GET /admin/logs
+
+Only users with role = admin can access these.
+
+🧪 Testing
+
+All APIs are tested via Swagger UI:
+
+Auth flow
+
+CRUD operations
+
+RBAC enforcement
+
+Dockerized environment
+
+📌 Why This Project Matters
+
+This backend demonstrates:
+
+Real-world authentication & authorization
+
+Clean separation of concerns
+
+Production-ready Docker setup
+
+Scalable backend architecture
+
+Ideal for backend-focused projects, MVPs, and API-first systems.
+
+👩‍💻 Author
+
+Shubhangi D.
+Python Backend Developer
+FastAPI • JWT • PostgreSQL • Docker

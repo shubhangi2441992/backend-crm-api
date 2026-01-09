@@ -4,6 +4,7 @@ from app.routers import users
 from app.database.database import engine
 from app.database import models
 from app.auth import auth_router
+from app.routers import admin
 
 # Create tables
 models.Base.metadata.create_all(bind=engine)
@@ -12,6 +13,7 @@ app = FastAPI(title="CRM Backend API")
 
 # Include routers
 app.include_router(auth_router.router, prefix="/auth", tags=["Authentication"])
+app.include_router(admin.router)
 app.include_router(users.router, prefix="/users", tags=["Users"])
 
 # Global HTTP exception handler
