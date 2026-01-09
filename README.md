@@ -4,6 +4,12 @@ A production-ready Backend CRM API built using FastAPI, featuring JWT authentica
 
 This project demonstrates how to build secure, scalable REST APIs suitable for real-world backend systems.
 
+## 📸 API Screenshots
+
+![Swagger API](screenshots/swagger_home.png)
+![JWT Authorization](screenshots/jwt_authorize.png)
+![Admin Stats](screenshots/admin_stats.png)
+
 ✨ Features
 
 🔐 JWT Authentication
