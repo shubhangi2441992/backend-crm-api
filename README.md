@@ -3,6 +3,7 @@
 A production-ready Backend CRM API built using FastAPI, featuring JWT authentication, role-based access control, PostgreSQL, and Dockerized deployment.
 
 This project demonstrates how to build secure, scalable REST APIs suitable for real-world backend systems.
+✅ Built for real-world usage (not a demo project)
 
 ## 📸 API Screenshots
 
@@ -59,6 +60,8 @@ ORM: SQLAlchemy
 Containerization: Docker, Docker Compose
 
 Docs: Swagger / OpenAPI
+
+This project is actively maintained and can be extended based on business needs.
 
 📂 Project Structure
 
